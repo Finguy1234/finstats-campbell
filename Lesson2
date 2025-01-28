@@ -1,0 +1,160 @@
+# Third Lesson in Statistics: Hypothesis Testing and Related Concepts
+
+# Importing Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import ttest_1samp, ttest_ind, ttest_rel, norm, chi2_contingency
+
+# Introduction
+"""
+Welcome to the third lesson in statistics! 
+In this tutorial, we will cover:
+1. Hypothesis Testing
+2. Test Statistics
+3. Standard Errors
+4. P-values and Statistical Significance
+5. Types of Errors in Hypothesis Testing
+6. Example Tests: t-test, chi-square test
+"""
+
+# Section 1: Hypothesis Testing
+"""
+Hypothesis testing is a statistical method used to decide whether there is enough evidence to reject a null hypothesis.
+
+Key Steps:
+1. Define the null hypothesis (H0) and alternative hypothesis (H1).
+2. Select a significance level (α, commonly 0.05).
+3. Calculate the test statistic.
+4. Compute the p-value.
+5. Decide to reject or fail to reject H0 based on the p-value and α.
+"""
+
+# Example: Testing if the average height of a group is 5.8 feet.
+data = [5.5, 5.7, 5.8, 5.9, 6.0, 5.6, 5.8, 5.7, 5.9, 5.8]
+
+# Null Hypothesis: Mean height = 5.8
+# Alternative Hypothesis: Mean height ≠ 5.8
+t_stat, p_value = ttest_1samp(data, 5.8)
+
+print(f"T-statistic: {t_stat:.4f}, P-value: {p_value:.4f}")
+
+if p_value < 0.05:
+    print("Reject the null hypothesis: The mean height is significantly different from 5.8.")
+else:
+    print("Fail to reject the null hypothesis: No significant difference in mean height.")
+
+# Section 2: Test Statistics
+"""
+Test statistics summarize data into a single value that can be compared against a theoretical distribution.
+Examples include:
+- t-statistic (t-test)
+- z-statistic (z-test)
+- chi-square statistic
+"""
+
+# Example: t-statistic from t-test
+"""
+The t-statistic is calculated as:
+t = (sample_mean - population_mean) / (sample_std_dev / sqrt(n))
+"""
+
+# Calculate manually
+sample_mean = np.mean(data)
+population_mean = 5.8
+sample_std_dev = np.std(data, ddof=1)
+n = len(data)
+
+t_stat_manual = (sample_mean - population_mean) / (sample_std_dev / np.sqrt(n))
+print(f"Calculated T-statistic: {t_stat_manual:.4f}")
+
+# Section 3: Standard Errors
+"""
+The standard error measures the variability of the sample mean. It is calculated as:
+SE = sample_std_dev / sqrt(n)
+"""
+
+standard_error = sample_std_dev / np.sqrt(n)
+print(f"Standard Error: {standard_error:.4f}")
+
+# Section 4: P-values and Statistical Significance
+"""
+P-value: The probability of obtaining a result at least as extreme as the observed data, assuming H0 is true.
+- A small p-value (e.g., < 0.05) suggests rejecting H0.
+- A large p-value suggests failing to reject H0.
+
+Statistical Significance:
+- If p-value < significance level (α, often 0.05), the result is statistically significant.
+"""
+
+# Section 5: Types of Errors in Hypothesis Testing
+"""
+1. Type I Error (False Positive): Rejecting H0 when it is true (controlled by α).
+2. Type II Error (False Negative): Failing to reject H0 when it is false.
+
+Power of a test: Probability of correctly rejecting H0 when it is false.
+"""
+
+# Section 6: Example Hypothesis Tests
+# (a) Two-Sample t-test: Compare means of two independent samples
+group_1 = [85, 87, 89, 90, 88]
+group_2 = [80, 81, 85, 86, 83]
+
+t_stat, p_value = ttest_ind(group_1, group_2)
+print(f"Two-Sample t-test - T-statistic: {t_stat:.4f}, P-value: {p_value:.4f}")
+
+# (b) Paired t-test: Compare means of paired samples (e.g., before/after)
+before = [85, 87, 89, 90, 88]
+after = [87, 88, 90, 91, 89]
+
+t_stat, p_value = ttest_rel(before, after)
+print(f"Paired t-test - T-statistic: {t_stat:.4f}, P-value: {p_value:.4f}")
+
+# (c) Chi-Square Test: Test for independence in categorical data
+"""
+The chi-square test is used to determine if there is a significant association between two categorical variables.
+"""
+
+# Example Data: Contingency Table
+observed = np.array([[50, 30], [20, 100]])  # e.g., Gender vs Preference
+chi2, p_value, dof, expected = chi2_contingency(observed)
+
+print(f"Chi-Square Statistic: {chi2:.4f}, P-value: {p_value:.4f}")
+print("Expected Frequencies:")
+print(expected)
+
+# Section 7: Visualizing p-values and Statistical Significance
+"""
+Visualizing distributions of test statistics helps understand p-values.
+"""
+
+# Example: Visualizing Normal Distribution and Critical Region
+x = np.linspace(-4, 4, 1000)
+pdf = norm.pdf(x)
+
+plt.figure(figsize=(8, 5))
+plt.plot(x, pdf, label="Normal Distribution")
+plt.axvline(x=-1.96, color='red', linestyle='--', label="Critical Value (-1.96)")
+plt.axvline(x=1.96, color='red', linestyle='--', label="Critical Value (1.96)")
+plt.fill_between(x, 0, pdf, where=(x <= -1.96) | (x >= 1.96), color='red', alpha=0.3)
+plt.title("Critical Region and p-values")
+plt.xlabel("Test Statistic")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Conclusion
+"""
+In this lesson, we covered:
+1. Hypothesis testing and its steps.
+2. Test statistics (e.g., t-statistic, chi-square statistic).
+3. Standard errors and their role in hypothesis testing.
+4. P-values and statistical significance.
+5. Types of errors (Type I and Type II).
+6. Example tests: t-test (one-sample, two-sample, paired) and chi-square test.
+
+Next Steps:
+- Explore ANOVA for comparing more than two groups.
+- Learn about non-parametric tests for non-normal data.
+- Experiment with Bayesian hypothesis testing.
+"""
