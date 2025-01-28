@@ -1,0 +1,306 @@
+
+"""
+Introduction to IID Assumptions
+IID means that observations in a dataset are:
+
+Independent: No observation depends on another.
+Identically Distributed: All observations come from the same probability distribution.
+Why are IID assumptions important?
+They underpin many statistical methods (e.g., linear regression, hypothesis testing).
+Real-world financial data often violates IID (e.g., autocorrelations in stock prices).
+"""
+
+"""
+1. Brownian Motion
+Brownian motion models random movement in continuous time. In finance, it's used to model stock prices under the Geometric Brownian Motion (GBM) framework.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameters
+T = 1.0          # Time in years
+N = 252          # Number of time steps (e.g., trading days)
+dt = T / N       # Time increment
+mu = 0.05        # Drift
+sigma = 0.2      # Volatility
+S0 = 100         # Initial value
+
+# Simulating Brownian motion
+np.random.seed(42)
+time = np.linspace(0, T, N)
+W = np.random.normal(0, np.sqrt(dt), N).cumsum()  # Wiener process
+X = S0 * np.exp((mu - 0.5 * sigma**2) * time + sigma * W)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(time, X, label="Brownian Motion (Stock Price)")
+plt.title("Simulated Brownian Motion")
+plt.xlabel("Time (Years)")
+plt.ylabel("Value")
+plt.legend()
+plt.show()
+
+"""
+2. Binomial Distribution
+The binomial distribution models the number of successes in n independent trials, where each trial has a success probability p.
+
+Use in Finance
+Binomial trees for option pricing.
+Modeling default probabilities.
+Python Example: Binomial Distribution for Defaults
+"""
+#Binomail Distribution
+from scipy.stats import binom
+
+# Parameters
+n = 10            # Number of loans
+p = 0.1           # Default probability
+
+# Calculate probabilities for 0 to n defaults
+x = np.arange(0, n + 1)
+probabilities = binom.pmf(x, n, p)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.bar(x, probabilities, alpha=0.7)
+plt.title("Binomial Distribution: Loan Defaults")
+plt.xlabel("Number of Defaults")
+plt.ylabel("Probability")
+plt.show()
+
+# Expected number of defaults
+expected_defaults = n * p
+print(f"Expected number of defaults: {expected_defaults}")
+
+"""
+3. Monte Carlo Simulation
+Monte Carlo simulations are used to model uncertainty by simulating random outcomes many times.
+
+Use in Finance
+Portfolio risk assessment.
+Option pricing.
+Stress testing.
+Python Example: Monte Carlo for Portfolio Returns
+"""
+
+#Monte Carlo Simulation
+# Parameters
+np.random.seed(42)
+num_simulations = 10000
+num_assets = 2
+weights = np.array([0.6, 0.4])  # Portfolio weights
+mean_returns = np.array([0.08, 0.12])  # Annual returns
+cov_matrix = np.array([[0.1**2, 0.02], [0.02, 0.15**2]])  # Covariance matrix
+
+# Simulating portfolio returns
+simulated_returns = np.random.multivariate_normal(mean_returns, cov_matrix, num_simulations)
+portfolio_returns = simulated_returns @ weights
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.hist(portfolio_returns, bins=50, alpha=0.7)
+plt.title("Monte Carlo Simulation: Portfolio Returns")
+plt.xlabel("Portfolio Return")
+plt.ylabel("Frequency")
+plt.show()
+
+# Summary statistics
+mean_portfolio_return = portfolio_returns.mean()
+print(f"Expected Portfolio Return: {mean_portfolio_return:.4%}")
+
+"""
+4. Mean Reversion
+Mean reversion assumes that prices or returns tend to move back to a historical average over time.
+
+Use in Finance
+Interest rate modeling (e.g., Ornstein-Uhlenbeck process).
+Pairs trading strategies.
+Python Example: Simulating Mean-Reverting Process
+"""
+
+#Mean Reversion
+# Parameters
+np.random.seed(42)
+T = 1.0          # Time in years
+N = 252          # Number of steps
+dt = T / N
+theta = 0.15     # Speed of reversion
+mu = 100         # Long-term mean
+sigma = 2        # Volatility
+X0 = 110         # Initial value
+
+# Simulating mean-reverting process
+time = np.linspace(0, T, N)
+X = np.zeros(N)
+X[0] = X0
+for t in range(1, N):
+    X[t] = X[t-1] + theta * (mu - X[t-1]) * dt + sigma * np.sqrt(dt) * np.random.normal()
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(time, X, label="Mean-Reverting Process")
+plt.axhline(mu, color='red', linestyle='--', label="Long-Term Mean")
+plt.title("Simulated Mean-Reverting Process")
+plt.xlabel("Time (Years)")
+plt.ylabel("Value")
+plt.legend()
+plt.show()
+
+"""
+5. Other Topics
+Value at Risk (VaR)
+VaR estimates the maximum loss over a given time horizon at a specific confidence level.
+
+Python Example
+"""
+#Value at Risk (VaR)
+# Portfolio returns from Monte Carlo
+VaR_95 = np.percentile(portfolio_returns, 5)
+print(f"95% Value at Risk: {VaR_95:.4%}")
+
+
+"""
+1. Introduction to Stationarity
+A stationary time series has statistical properties (mean, variance, autocorrelation) that do not change over time. Stationarity is a key assumption for many time series models, such as ARIMA.
+
+Types of Stationarity:
+Strict Stationarity: The entire joint distribution is invariant to shifts in time.
+Weak (Second-Order) Stationarity: Mean, variance, and autocovariance are time-invariant.
+Why is Stationarity Important?
+Many statistical models (e.g., ARIMA) assume stationarity.
+Non-stationary data can lead to misleading results.
+2. Tests for Stationarity
+a. Augmented Dickey-Fuller (ADF) Test
+The ADF test checks for the presence of a unit root, which indicates non-stationarity. The null hypothesis (𝐻0) is that the series has a unit root (non-stationary).
+"""
+
+from statsmodels.tsa.stattools import adfuller
+
+# Example Data: Non-stationary time series (random walk)
+import numpy as np
+np.random.seed(42)
+n = 100
+random_walk = np.cumsum(np.random.normal(0, 1, n))
+
+# ADF Test
+adf_result = adfuller(random_walk)
+print("ADF Statistic:", adf_result[0])
+print("p-value:", adf_result[1])
+if adf_result[1] < 0.05:
+    print("Reject the null hypothesis: The series is stationary.")
+else:
+    print("Fail to reject the null hypothesis: The series is non-stationary.")
+
+"""
+b. KPSS (Kwiatkowski-Phillips-Schmidt-Shin) Test
+The KPSS test is a complement to the ADF test. Here, the null hypothesis (H0) is that the series is stationary.
+"""
+
+from statsmodels.tsa.stattools import kpss
+
+# KPSS Test
+kpss_result = kpss(random_walk, regression='c')
+print("KPSS Statistic:", kpss_result[0])
+print("p-value:", kpss_result[1])
+if kpss_result[1] < 0.05:
+    print("Reject the null hypothesis: The series is non-stationary.")
+else:
+    print("Fail to reject the null hypothesis: The series is stationary.")
+
+"""
+3. Tests for Autocorrelation
+Autocorrelation measures the relationship between a time series and its lagged values.
+
+a. Plotting Autocorrelation and Partial Autocorrelation
+Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) are useful for identifying patterns in time series.
+"""
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import matplotlib.pyplot as plt
+
+# Plot ACF and PACF
+plt.figure(figsize=(10, 6))
+plot_acf(random_walk, lags=20, title="ACF: Random Walk")
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plot_pacf(random_walk, lags=20, title="PACF: Random Walk")
+plt.show()
+
+"""
+b. Ljung-Box Test
+The Ljung-Box test evaluates whether the autocorrelations of a time series are significantly different from zero.
+"""
+
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+# Ljung-Box Test
+ljung_box_result = acorr_ljungbox(random_walk, lags=[10], return_df=True)
+print(ljung_box_result)
+
+"""
+4. Methods to Make Data Stationary
+a. Differencing
+Subtract the previous value from the current value to remove trends or seasonality.
+"""
+
+# Differencing
+differenced_data = np.diff(random_walk)
+
+# ADF Test on Differenced Data
+adf_result_diff = adfuller(differenced_data)
+print("ADF Statistic (Differenced):", adf_result_diff[0])
+print("p-value (Differenced):", adf_result_diff[1])
+
+
+"""
+b. Log Transformation
+Apply a log transformation to stabilize variance in data.
+"""
+
+# Simulated Exponential Growth Data
+time = np.arange(1, n + 1)
+exp_growth = np.exp(0.03 * time) * np.random.normal(1, 0.05, n)
+
+# Log Transform
+log_transformed = np.log(exp_growth)
+
+plt.figure(figsize=(10, 6))
+plt.plot(time, exp_growth, label="Original Data")
+plt.plot(time, log_transformed, label="Log Transformed Data")
+plt.legend()
+plt.show()
+
+"""
+c. Detrending
+Remove the trend component using a linear regression or moving average.
+"""
+
+from scipy.signal import detrend
+
+# Detrend the data
+detrended_data = detrend(random_walk)
+
+plt.figure(figsize=(10, 6))
+plt.plot(random_walk, label="Original Data")
+plt.plot(detrended_data, label="Detrended Data")
+plt.legend()
+plt.show()
+
+#d. Seasonal Decomposition
+#Use decomposition to remove seasonal and trend components.
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Simulated Seasonal Data
+seasonal_data = np.sin(2 * np.pi * time / 12) + np.random.normal(0, 0.1, n)
+
+# Decompose
+result = seasonal_decompose(seasonal_data, period=12, model="additive")
+
+# Plot Decomposition
+result.plot()
+plt.show()
+
+
+
