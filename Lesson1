@@ -5,4 +5,288 @@
    ---
    ```
 
-What we have here is a failure to communicate.
+# First Lesson in Statistics with Python
+
+# Importing Necessary Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Introduction
+"""
+Welcome to your first lesson in statistics! 
+In this tutorial, we'll cover:
+1. What is statistics?
+2. Types of Data
+3. Descriptive Statistics:
+   - Mean
+   - Median
+   - Mode
+   - Range
+   - Variance and Standard Deviation
+4. Visualizing Data
+"""
+
+# Section 1: What is Statistics?
+"""
+Statistics is the science of collecting, organizing, analyzing, and interpreting data.
+There are two main branches:
+1. Descriptive Statistics - Summarizing and describing data.
+2. Inferential Statistics - Drawing conclusions from data.
+"""
+
+# Section 2: Types of Data
+"""
+1. Numerical Data:
+   - Discrete (e.g., number of students)
+   - Continuous (e.g., height, weight)
+
+2. Categorical Data:
+   - Nominal (e.g., gender, colors)
+   - Ordinal (e.g., ranks, levels)
+"""
+
+# Example Data
+data = {
+    "Age": [22, 25, 30, 22, 29, 24, 25, 30, 22, 27],
+    "Height": [5.5, 5.7, 5.8, 5.5, 6.0, 5.6, 5.7, 5.8, 5.5, 5.9],
+    "Score": [85, 90, 88, 85, 91, 87, 89, 88, 85, 90]
+}
+
+# Creating a DataFrame
+df = pd.DataFrame(data)
+
+# Displaying the DataFrame
+print("DataFrame:\n", df)
+
+# Section 3: Descriptive Statistics
+"""
+Let's calculate:
+1. Mean
+2. Median
+3. Mode
+4. Range
+5. Variance and Standard Deviation
+"""
+
+# Mean
+mean_age = np.mean(df["Age"])
+mean_height = np.mean(df["Height"])
+print(f"Mean Age: {mean_age}, Mean Height: {mean_height}")
+
+# Median
+median_age = np.median(df["Age"])
+median_height = np.median(df["Height"])
+print(f"Median Age: {median_age}, Median Height: {median_height}")
+
+# Mode
+mode_age = df["Age"].mode()[0]
+print(f"Mode Age: {mode_age}")
+
+# Range
+range_age = np.max(df["Age"]) - np.min(df["Age"])
+print(f"Range of Age: {range_age}")
+
+# Variance and Standard Deviation
+variance_age = np.var(df["Age"], ddof=1)  # Sample Variance
+std_dev_age = np.std(df["Age"], ddof=1)   # Sample Standard Deviation
+print(f"Variance of Age: {variance_age}, Standard Deviation of Age: {std_dev_age}")
+
+# Section 4: Visualizing Data
+"""
+Let's visualize the data using plots:
+1. Histogram
+2. Box Plot
+3. Scatter Plot
+"""
+
+# Histogram
+plt.figure(figsize=(8, 5))
+plt.hist(df["Age"], bins=5, color="blue", alpha=0.7)
+plt.title("Histogram of Age")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# Box Plot
+plt.figure(figsize=(8, 5))
+plt.boxplot(df["Height"], vert=False, patch_artist=True)
+plt.title("Box Plot of Height")
+plt.xlabel("Height (in feet)")
+plt.show()
+
+# Scatter Plot
+plt.figure(figsize=(8, 5))
+plt.scatter(df["Age"], df["Score"], color="green")
+plt.title("Scatter Plot of Age vs. Score")
+plt.xlabel("Age")
+plt.ylabel("Score")
+plt.show()
+
+# Summary
+"""
+In this lesson, we covered:
+1. Basic concepts of statistics.
+2. Types of data.
+3. Descriptive statistics: mean, median, mode, range, variance, and standard deviation.
+4. Visualizing data using histograms, box plots, and scatter plots.
+"""
+
+# Advanced Topics in Statistics
+
+# Importing Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import norm, uniform, expon, entropy
+
+# Introduction
+"""
+Welcome to the second lesson in statistics! 
+In this tutorial, we will cover:
+1. Random Variables
+2. Probability Density Function (PDF)
+3. Cumulative Distribution Function (CDF)
+4. Log-Likelihood
+5. Entropy
+6. Order Statistics
+7. Sampling and Sampling Rates
+"""
+
+# Section 1: Random Variables
+"""
+A random variable is a variable that takes on numerical values determined by the outcome of a random process.
+
+Types of Random Variables:
+1. Discrete: Takes specific values (e.g., number of heads in coin tosses).
+2. Continuous: Takes any value within a range (e.g., height, weight).
+"""
+
+# Example: Discrete vs Continuous
+discrete_rv = np.random.randint(1, 7, size=1000)  # Simulating dice rolls
+continuous_rv = np.random.uniform(0, 1, size=1000)  # Simulating uniform distribution
+
+# Plotting
+plt.figure(figsize=(12, 5))
+plt.hist(discrete_rv, bins=6, alpha=0.7, label="Discrete RV (Dice Roll)")
+plt.hist(continuous_rv, bins=20, alpha=0.7, label="Continuous RV (Uniform)")
+plt.title("Discrete vs Continuous Random Variables")
+plt.legend()
+plt.show()
+
+# Section 2: Probability Density Function (PDF)
+"""
+PDF describes the likelihood of a random variable taking a specific value (for continuous RVs).
+Discrete RVs use Probability Mass Function (PMF) instead of PDF.
+"""
+
+# Example: Normal Distribution PDF
+x = np.linspace(-4, 4, 1000)
+pdf = norm.pdf(x, loc=0, scale=1)  # Standard Normal Distribution
+
+plt.figure(figsize=(8, 5))
+plt.plot(x, pdf, label="PDF (Standard Normal)")
+plt.title("Probability Density Function (PDF)")
+plt.xlabel("Value")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Section 3: Cumulative Distribution Function (CDF)
+"""
+CDF is the cumulative probability that a random variable takes a value less than or equal to x.
+"""
+
+# Example: Normal Distribution CDF
+cdf = norm.cdf(x, loc=0, scale=1)
+
+plt.figure(figsize=(8, 5))
+plt.plot(x, cdf, label="CDF (Standard Normal)", color="red")
+plt.title("Cumulative Distribution Function (CDF)")
+plt.xlabel("Value")
+plt.ylabel("Cumulative Probability")
+plt.legend()
+plt.show()
+
+# Section 4: Log-Likelihood
+"""
+The log-likelihood measures how likely observed data is given a probability model.
+It's often used in parameter estimation.
+"""
+
+# Example: Log-Likelihood of Normal Distribution
+observed_data = np.random.normal(loc=2, scale=1, size=100)  # Simulated Data
+log_likelihood = np.sum(norm.logpdf(observed_data, loc=2, scale=1))
+print(f"Log-Likelihood: {log_likelihood}")
+
+# Section 5: Entropy
+"""
+Entropy quantifies the uncertainty of a random variable.
+Higher entropy indicates greater uncertainty.
+"""
+
+# Example: Calculating Entropy
+probabilities = [0.25, 0.25, 0.25, 0.25]  # Uniform probabilities
+entropy_value = entropy(probabilities, base=2)  # Base 2 for bits
+print(f"Entropy: {entropy_value} bits")
+
+# Section 6: Order Statistics
+"""
+Order statistics deal with the properties of ordered random samples (e.g., minimum, maximum, medians).
+"""
+
+# Example: Order Statistics
+random_sample = np.random.normal(0, 1, size=1000)
+minimum = np.min(random_sample)
+maximum = np.max(random_sample)
+median = np.median(random_sample)
+print(f"Min: {minimum}, Max: {maximum}, Median: {median}")
+
+# Section 7: Sampling and Sampling Rates
+"""
+Sampling is the process of selecting a subset of data points from a larger population.
+
+Sampling Rate: Number of samples per unit time in a signal (e.g., 44.1 kHz in audio).
+"""
+
+# Example: Sampling from a Distribution
+population = np.random.normal(0, 1, size=10000)
+sample = np.random.choice(population, size=100, replace=False)
+
+plt.figure(figsize=(8, 5))
+plt.hist(population, bins=50, alpha=0.7, label="Population")
+plt.hist(sample, bins=20, alpha=0.7, label="Sample")
+plt.title("Population vs Sample")
+plt.legend()
+plt.show()
+
+# Summary of Different Distributions
+"""
+1. Normal Distribution: Symmetric, bell-shaped curve (e.g., heights, test scores).
+2. Uniform Distribution: Equal likelihood for all outcomes (e.g., rolling a die).
+3. Exponential Distribution: Time between events in a Poisson process (e.g., call arrivals).
+"""
+
+# Example: Plotting Different Distributions
+x = np.linspace(0, 5, 1000)
+plt.figure(figsize=(12, 5))
+plt.plot(x, norm.pdf(x, loc=2, scale=0.5), label="Normal Distribution")
+plt.plot(x, uniform.pdf(x, loc=0, scale=5), label="Uniform Distribution")
+plt.plot(x, expon.pdf(x, scale=1), label="Exponential Distribution")
+plt.title("Different Probability Distributions")
+plt.xlabel("Value")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Conclusion
+"""
+In this lesson, we explored:
+1. Random variables (discrete and continuous).
+2. PDF and CDF.
+3. Log-Likelihood for model evaluation.
+4. Entropy for measuring uncertainty.
+5. Order statistics for analyzing extremes and medians.
+6. Sampling and sampling rates.
+7. Different types of distributions (Normal, Uniform, Exponential).
+"""
