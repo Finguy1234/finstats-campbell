@@ -1,0 +1,169 @@
+
+# Third Lesson in Statistics: Advanced Hypothesis Testing
+
+# Importing Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import f_oneway, kruskal, mannwhitneyu, norm
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+from scipy.stats import beta
+
+# Introduction
+"""
+Welcome to the fourth lesson in statistics! 
+In this tutorial, we will cover:
+1. ANOVA (Analysis of Variance)
+2. Non-Parametric Tests
+3. Bayesian Hypothesis Testing
+"""
+
+# Section 1: ANOVA (Analysis of Variance)
+"""
+ANOVA tests whether there are statistically significant differences between the means of three or more groups.
+
+Key Types:
+1. One-Way ANOVA: Tests one factor across groups.
+2. Two-Way ANOVA: Tests two factors and their interaction.
+
+Assumptions:
+1. Normality of data in each group.
+2. Homogeneity of variances across groups.
+"""
+
+# Example: One-Way ANOVA
+group_1 = [85, 88, 86, 90, 87]
+group_2 = [80, 82, 83, 81, 84]
+group_3 = [78, 76, 79, 77, 75]
+
+# Perform One-Way ANOVA
+f_stat, p_value = f_oneway(group_1, group_2, group_3)
+print(f"One-Way ANOVA - F-statistic: {f_stat:.4f}, P-value: {p_value:.4f}")
+
+if p_value < 0.05:
+    print("Reject the null hypothesis: There is a significant difference between group means.")
+else:
+    print("Fail to reject the null hypothesis: No significant difference between group means.")
+
+# Post-hoc Test: Tukey's HSD
+"""
+If ANOVA is significant, a post-hoc test like Tukey's HSD can determine which groups differ.
+"""
+data = pd.DataFrame({
+    'Value': group_1 + group_2 + group_3,
+    'Group': ['Group 1'] * len(group_1) + ['Group 2'] * len(group_2) + ['Group 3'] * len(group_3)
+})
+
+tukey = pairwise_tukeyhsd(endog=data['Value'], groups=data['Group'], alpha=0.05)
+print(tukey)
+
+# Section 2: Non-Parametric Tests
+"""
+Non-parametric tests do not assume normality or equal variances. They are used for ordinal data or non-normal distributions.
+
+Examples:
+1. Kruskal-Wallis Test (alternative to One-Way ANOVA)
+2. Mann-Whitney U Test (alternative to Two-Sample t-test)
+"""
+
+# (a) Kruskal-Wallis Test
+"""
+Tests whether the medians of three or more groups are significantly different.
+"""
+h_stat, p_value = kruskal(group_1, group_2, group_3)
+print(f"Kruskal-Wallis Test - H-statistic: {h_stat:.4f}, P-value: {p_value:.4f}")
+
+# (b) Mann-Whitney U Test
+"""
+Compares medians of two independent groups.
+"""
+u_stat, p_value = mannwhitneyu(group_1, group_2, alternative='two-sided')
+print(f"Mann-Whitney U Test - U-statistic: {u_stat:.4f}, P-value: {p_value:.4f}")
+
+# Section 3: Bayesian Hypothesis Testing
+"""
+Bayesian hypothesis testing evaluates the probability of a hypothesis given the observed data, incorporating prior beliefs.
+
+Key Components:
+1. Prior: Belief about the parameter before observing data.
+2. Likelihood: Probability of the data given the parameter.
+3. Posterior: Updated belief after observing data.
+
+Bayes' Theorem:
+P(H|D) = [P(D|H) * P(H)] / P(D)
+"""
+
+# Example: Comparing Two Groups with Bayesian Approach
+"""
+Let’s compare two groups assuming a Beta distribution for the prior and posterior.
+"""
+
+# Simulated data: Success counts for two groups
+success_group_1 = 40
+success_group_2 = 30
+total_group_1 = 50
+total_group_2 = 50
+
+# Prior beliefs (Beta distribution)
+alpha_prior, beta_prior = 1, 1  # Uniform prior
+
+# Posterior parameters for each group
+alpha_post_1 = alpha_prior + success_group_1
+beta_post_1 = beta_prior + (total_group_1 - success_group_1)
+
+alpha_post_2 = alpha_prior + success_group_2
+beta_post_2 = beta_prior + (total_group_2 - success_group_2)
+
+# Visualizing the posterior distributions
+x = np.linspace(0, 1, 1000)
+posterior_1 = beta.pdf(x, alpha_post_1, beta_post_1)
+posterior_2 = beta.pdf(x, alpha_post_2, beta_post_2)
+
+plt.figure(figsize=(8, 5))
+plt.plot(x, posterior_1, label="Posterior Group 1", color='blue')
+plt.plot(x, posterior_2, label="Posterior Group 2", color='green')
+plt.title("Posterior Distributions of Success Rates")
+plt.xlabel("Success Rate")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+# Calculate the probability that Group 1 has a higher success rate than Group 2
+prob_group_1_better = np.sum(posterior_1 > posterior_2) / len(posterior_1)
+print(f"Probability that Group 1 has a higher success rate than Group 2: {prob_group_1_better:.4f}")
+
+# Section 4: Visual Summary of ANOVA vs Non-Parametric Tests
+"""
+Let’s summarize visually how ANOVA and non-parametric tests compare under normal and non-normal conditions.
+"""
+
+# Generate data
+np.random.seed(42)
+normal_data = [np.random.normal(loc, 1, 50) for loc in [0, 1, 2]]
+non_normal_data = [np.random.exponential(scale, 50) for scale in [1, 1.5, 2]]
+
+# Plot
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.boxplot(normal_data, labels=["Group 1", "Group 2", "Group 3"])
+plt.title("Normal Data (ANOVA Suitable)")
+plt.subplot(1, 2, 2)
+plt.boxplot(non_normal_data, labels=["Group 1", "Group 2", "Group 3"])
+plt.title("Non-Normal Data (Non-Parametric Suitable)")
+plt.tight_layout()
+plt.show()
+
+# Conclusion
+"""
+In this lesson, we covered:
+1. ANOVA (One-Way): Testing differences in means across multiple groups.
+   - Tukey's HSD for post-hoc analysis.
+2. Non-Parametric Tests: Alternatives for non-normal data.
+   - Kruskal-Wallis and Mann-Whitney U tests.
+3. Bayesian Hypothesis Testing: A probabilistic framework that incorporates prior beliefs.
+
+Next Steps:
+- Explore Two-Way ANOVA for multiple factors.
+- Dive deeper into Bayesian analysis (e.g., Bayesian inference using PyMC3).
+- Practice these methods on real-world datasets.
+"""
