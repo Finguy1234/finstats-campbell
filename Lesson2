@@ -1,4 +1,11 @@
-# Third Lesson in Statistics: Hypothesis Testing and Related Concepts
+   ```yaml
+   ---
+   title: "SECOND-LESSON"
+   date: 2025-01-28
+   ---
+   ```
+
+# Second Lesson in Statistics: Hypothesis Testing and Related Concepts
 
 # Importing Libraries
 import numpy as np
@@ -152,9 +159,4 @@ In this lesson, we covered:
 4. P-values and statistical significance.
 5. Types of errors (Type I and Type II).
 6. Example tests: t-test (one-sample, two-sample, paired) and chi-square test.
-
-Next Steps:
-- Explore ANOVA for comparing more than two groups.
-- Learn about non-parametric tests for non-normal data.
-- Experiment with Bayesian hypothesis testing.
 """
