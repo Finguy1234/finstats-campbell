@@ -1,0 +1,13 @@
+
+"""
+1. Introduction to Time Series Models
+a. Key Components of Time Series
+Trend: Long-term direction of the series.
+Seasonality: Periodic fluctuations (e.g., monthly sales).
+Cyclicality: Non-periodic cycles caused by external factors.
+Noise: Random fluctuations.
+2. Time Series Models
+a. Autoregressive (AR) Model
+The AR model predicts a value based on its past values:
+"""
+
