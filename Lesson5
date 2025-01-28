@@ -1,3 +1,9 @@
+   ```yaml
+   ---
+   title: "FIFTH-LESSON"
+   date: 2025-01-28
+   ---
+   ```
 
 """
 1. Introduction to Time Series Models
@@ -10,4 +16,46 @@ Noise: Random fluctuations.
 a. Autoregressive (AR) Model
 The AR model predicts a value based on its past values:
 """
+
+from statsmodels.tsa.ar_model import AutoReg
+
+# Simulated AR(1) process
+np.random.seed(42)
+n = 200
+phi = 0.8
+noise = np.random.normal(0, 1, n)
+ar_data = [0]
+for t in range(1, n):
+    ar_data.append(phi * ar_data[t-1] + noise[t])
+
+# Fit AR(1) model
+model_ar = AutoReg(ar_data, lags=1).fit()
+print(model_ar.summary())
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(ar_data, label="Simulated AR(1) Data")
+plt.plot(model_ar.fittedvalues, label="Fitted AR(1) Model")
+plt.legend()
+plt.show()
+
+#ARIMA models (combines AR with MA and differencing
+from statsmodels.tsa.arima.model import ARIMA
+
+# Simulated non-stationary data (random walk)
+random_walk = np.cumsum(np.random.normal(0, 1, n))
+
+# Fit ARIMA(1,1,1) model
+model_arima = ARIMA(random_walk, order=(1, 1, 1)).fit()
+print(model_arima.summary())
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(random_walk, label="Simulated Random Walk")
+plt.plot(model_arima.fittedvalues, label="Fitted ARIMA(1,1,1) Model")
+plt.legend()
+plt.show()
+
+
+
 
